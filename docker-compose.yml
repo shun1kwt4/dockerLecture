@@ -1,0 +1,64 @@
+version: '3.9'  #docker-composeのバージョン
+services:
+  # バックエンド
+  backend:
+    container_name: sample_backend
+    build: 
+      context: .
+      dockerfile: ./backend/Dockerfile
+    env_file:
+      - ./.env
+    tty: true
+    stdin_open: true
+    volumes:
+      - type: bind
+        source: ./backend
+        target: /backend
+    ports:
+      - ${HOST_SERVER_PORTS}:${CONTAINER_SERVER_PORTS}
+    depends_on:
+      - database
+  
+  # フロントエンド
+  frontend:
+    container_name: sample_frontend
+    build: 
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    env_file:
+      - ./.env
+    tty: true
+    stdin_open: true
+    volumes:
+      - type: bind
+        source: ./frontend
+        target: /usr/src/app
+    command: sh -c "yarn install &&PORT=3030 yarn start"
+    ports:
+      - ${HOST_FRONT_PORTS}:${CONTAINER_FRONT_PORTS}
+    depends_on:
+      - database
+
+  # # データベース
+  database:
+    image: mysql:8.3
+    container_name: mysql
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_USER_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: ${MYSQL_TZ}
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./database/data:/var/lib/mysql
+      - ./database/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./database/sqls:/docker-entrypoint-initdb.d
+    ports:
+      - ${HOST_DATABASE_PORTS}:${CONTAINER_DATABASE_PORTS}
+
+
+
