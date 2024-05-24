@@ -33,7 +33,7 @@ services:
       - type: bind
         source: ./frontend
         target: /usr/src/app
-    command: sh -c "yarn install &&PORT=3030 yarn start"
+    command: sh -c "yarn install & &PORT=3030 yarn start"
     ports:
       - ${HOST_FRONT_PORTS}:${CONTAINER_FRONT_PORTS}
     depends_on:

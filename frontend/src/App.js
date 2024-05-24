@@ -1,24 +1,20 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+// App.js
 
-const MyComponent = () => {
-  const [data, setData] = useState('');
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+// import Home from './Home';
+import Signup from './components/signup';
+import Login from './components/login';
 
-  const sendDataToBackend = async () => {
-    try {
-      const response = await axios.post('http://localhost:80/api/endpoint', { data: data });
-      console.log(response.data); // レスポンスをコンソールに出力
-    } catch (error) {
-      console.error('Error sending data to backend:', error);
-    }
-  };
-
+const App = () => {
   return (
-    <div>
-      <input type="text" value={data} onChange={(e) => setData(e.target.value)} />
-      <button onClick={sendDataToBackend}>Send Data</button>
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/signup" component={Signup} />
+        <Route path="/login" component={Login} />
+      </Switch>
+    </Router>
   );
-};
+}
 
-export default MyComponent;
+export default App;
